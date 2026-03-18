@@ -440,8 +440,31 @@
             { text: "✅ מסיים חישוב סופי...", time: 8500 },
         ];
 
+        // ===== שים כאן את הכתובת מ-Google Apps Script =====
+        const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+
         function handleSubmit(e) {
             e.preventDefault();
+
+            // Collect form data
+            const areaMap = { south: "דרום", center: "מרכז", north: "צפון" };
+            const formData = {
+                name: document.getElementById('name').value,
+                income: document.getElementById('income').value,
+                field: document.getElementById('field').value,
+                decrease: document.getElementById('decrease').value,
+                area: areaMap[document.getElementById('area').value] || document.getElementById('area').value
+            };
+
+            // Send data to Google Sheets (fire and forget)
+            if (GOOGLE_SCRIPT_URL !== "YOUR_GOOGLE_SCRIPT_URL_HERE") {
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                }).catch(() => {}); // silent fail - don't block the UX
+            }
 
             // Hide form, show loading
             document.getElementById('form-screen').style.display = 'none';
