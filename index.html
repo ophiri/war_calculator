@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון פיצויים לעצמאיים | מבצע שאגת הארי 🦁🇮🇱</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* ===== FORM SCREEN ===== */
+        #form-screen {
+            width: 100%;
+            max-width: 520px;
+            padding: 20px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 24px;
+            padding: 40px 36px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h1 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #00d2ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'Heebo', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6.5 6.5 6.5-6.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 16px center;
+            padding-left: 40px;
+        }
+
+        .form-group select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #7b2ff7;
+            box-shadow: 0 0 0 3px rgba(123, 47, 247, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            margin-top: 12px;
+            background: linear-gradient(135deg, #7b2ff7, #00d2ff);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Heebo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(123, 47, 247, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ===== LOADING SCREEN ===== */
+        #loading-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            z-index: 100;
+        }
+
+        .spinner-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin-bottom: 50px;
+        }
+
+        .spinner-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .spinner-ring:nth-child(1) {
+            border-top-color: #7b2ff7;
+            border-bottom-color: #7b2ff7;
+            animation-duration: 1.5s;
+        }
+
+        .spinner-ring:nth-child(2) {
+            inset: 12px;
+            border-right-color: #00d2ff;
+            border-left-color: #00d2ff;
+            animation-duration: 2s;
+            animation-direction: reverse;
+        }
+
+        .spinner-ring:nth-child(3) {
+            inset: 24px;
+            border-top-color: #ff6b6b;
+            border-bottom-color: #ff6b6b;
+            animation-duration: 1s;
+        }
+
+        .spinner-core {
+            position: absolute;
+            inset: 36px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(123, 47, 247, 0.4), transparent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .loading-text {
+            font-size: 22px;
+            font-weight: 700;
+            min-height: 36px;
+            text-align: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-text.fade-out {
+            opacity: 0;
+        }
+
+        .loading-text.fade-in {
+            opacity: 1;
+        }
+
+        .progress-bar-container {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #7b2ff7, #00d2ff);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .loading-percentage {
+            margin-top: 12px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 99;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(123, 47, 247, 0.6);
+            animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* ===== RESULT SCREEN ===== */
+        #result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            z-index: 100;
+            animation: fadeInUp 0.8s ease;
+            padding: 20px;
+        }
+
+        #result-screen img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: resultPop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        @keyframes resultPop {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .restart-btn {
+            margin-top: 30px;
+            padding: 12px 36px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Heebo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Decorative blobs */
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .blob-1 {
+            width: 400px; height: 400px;
+            background: #7b2ff7;
+            top: -100px; right: -100px;
+        }
+        .blob-2 {
+            width: 300px; height: 300px;
+            background: #00d2ff;
+            bottom: -80px; left: -80px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <!-- FORM SCREEN -->
+    <div id="form-screen">
+        <div class="card">
+            <div style="text-align:center;margin-bottom:8px;"><img src="logo.png" alt="לוגו" style="width:320px;height:auto;"></div>
+            <h1>מחשבון פיצויים לעצמאיים</h1>
+            <p class="subtitle">מבצע שאגת הארי — מילוי הפרטים לחישוב סכום הפיצויים המגיע לך</p>
+
+            <form id="calc-form" onsubmit="return handleSubmit(event)">
+                <div class="form-group">
+                    <label for="name">שם מלא</label>
+                    <input type="text" id="name" placeholder="הכנס את שמך המלא" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="income">הכנסה חודשית משוערכת מהעסק (₪)</label>
+                    <input type="number" id="income" placeholder="לדוגמה: 25,000" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="field">תחום העיסוק</label>
+                    <input type="text" id="field" placeholder="לדוגמה: מסעדנות, קמעונאות..." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="decrease">ירידה משוערכת בהיקף ההכנסות (%)</label>
+                    <input type="number" id="decrease" placeholder="לדוגמה: 60" min="0" max="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="area">אזור</label>
+                    <select id="area" required>
+                        <option value="" disabled selected>בחר אזור</option>
+                        <option value="south">דרום</option>
+                        <option value="center">מרכז</option>
+                        <option value="north">צפון</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">חשב פיצויים</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="particles" id="particles"></div>
+        <div class="spinner-container">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-core"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;color:rgba(255,255,255,0.4);font-size:18px;"><img src="logo.png" alt="לוגו" style="width:160px;height:auto;"> מבצע שאגת הארי</div>
+        <div class="loading-text" id="loading-text"></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="loading-percentage" id="loading-percentage">0%</div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen">
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:18px;color:rgba(255,255,255,0.6);font-size:20px;"><img src="logo.png" alt="לוגו" style="width:176px;height:auto;"> מבצע שאגת הארי — תוצאות חישוב פיצויים</div>
+        <img src="zibi.png" alt="תוצאה">
+        <button class="restart-btn" onclick="restart()">חזרה למחשבון</button>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 6 + 4) + 's';
+                p.style.animationDelay = (Math.random() * 5) + 's';
+                p.style.width = p.style.height = (Math.random() * 4 + 2) + 'px';
+                const colors = ['rgba(123,47,247,0.6)', 'rgba(0,210,255,0.6)', 'rgba(255,107,107,0.5)'];
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(p);
+            }
+        }
+
+        const loadingMessages = [
+            { text: "📊 מחשב סכום פיצויים...", time: 0 },
+            { text: "📈 משערך נזקים פוטנציאליים...", time: 2500 },
+            { text: "🔍 בודק זכאות לפי אזור מגורים...", time: 4500 },
+            { text: "🧠 משכלל את כל הנתונים...", time: 6500 },
+            { text: "✅ מסיים חישוב סופי...", time: 8500 },
+        ];
+
+        function handleSubmit(e) {
+            e.preventDefault();
+
+            // Hide form, show loading
+            document.getElementById('form-screen').style.display = 'none';
+            document.getElementById('loading-screen').style.display = 'flex';
+
+            createParticles();
+
+            const textEl = document.getElementById('loading-text');
+            const progressBar = document.getElementById('progress-bar');
+            const percentageEl = document.getElementById('loading-percentage');
+
+            // Animate messages
+            loadingMessages.forEach((msg, index) => {
+                setTimeout(() => {
+                    textEl.classList.add('fade-out');
+                    setTimeout(() => {
+                        textEl.textContent = msg.text;
+                        textEl.classList.remove('fade-out');
+                        textEl.classList.add('fade-in');
+                    }, 300);
+                }, msg.time);
+            });
+
+            // Animate progress bar
+            const totalDuration = 10000;
+            const startTime = Date.now();
+
+            function updateProgress() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min((elapsed / totalDuration) * 100, 100);
+                progressBar.style.width = progress + '%';
+                percentageEl.textContent = Math.round(progress) + '%';
+
+                if (progress < 100) {
+                    requestAnimationFrame(updateProgress);
+                }
+            }
+            requestAnimationFrame(updateProgress);
+
+            // After 10 seconds, show result
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('result-screen').style.display = 'flex';
+            }, totalDuration);
+
+            return false;
+        }
+
+        function restart() {
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('form-screen').style.display = 'block';
+            document.getElementById('form-screen').style.animation = 'fadeInUp 0.8s ease';
+            document.getElementById('calc-form').reset();
+            // Clear particles
+            document.getElementById('particles').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
