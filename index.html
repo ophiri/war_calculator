@@ -20,7 +20,7 @@
             align-items: center;
             justify-content: center;
             color: #fff;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         /* ===== FORM SCREEN ===== */
@@ -341,6 +341,31 @@
             background: #00d2ff;
             bottom: -80px; left: -80px;
         }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 600px) {
+            body {
+                align-items: flex-start;
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+
+            .card {
+                padding: 28px 20px;
+            }
+
+            .card h1 {
+                font-size: 22px;
+            }
+
+            .form-logo {
+                width: 160px !important;
+            }
+
+            #form-screen {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -351,7 +376,7 @@
     <!-- FORM SCREEN -->
     <div id="form-screen">
         <div class="card">
-            <div style="text-align:center;margin-bottom:8px;"><img src="logo.png" alt="לוגו" style="width:320px;height:auto;"></div>
+            <div style="text-align:center;margin-bottom:8px;"><img src="logo.png" alt="לוגו" class="form-logo" style="width:320px;height:auto;"></div>
             <h1>מחשבון פיצויים לעצמאיים</h1>
             <p class="subtitle">מבצע שאגת הארי — מילוי הפרטים לחישוב סכום הפיצויים המגיע לך</p>
 
