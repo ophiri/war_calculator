@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחשבון פיצויי מלחמה לעסקים | חישוב רשמי</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #f5f6fa;
+            color: #2d3436;
+            min-height: 100vh;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            background: linear-gradient(135deg, #0a3d62, #1e5f8a);
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .top-bar h1 { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+        .top-bar p { font-size: 14px; opacity: 0.75; }
+
+        /* ===== LAYOUT ===== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        .disclaimer-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #856404;
+        }
+        .disclaimer-box strong { color: #664d03; }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #0a3d62;
+        }
+        .card .card-desc {
+            font-size: 13px;
+            color: #636e72;
+            margin-bottom: 22px;
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group.full { grid-column: 1 / -1; }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #2d3436;
+        }
+        .form-group label .hint {
+            font-weight: 400;
+            color: #b2bec3;
+            font-size: 12px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #dfe6e9;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Heebo', sans-serif;
+            color: #2d3436;
+            background: #fafbfc;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0a3d62;
+            box-shadow: 0 0 0 3px rgba(10,61,98,0.1);
+            background: #fff;
+        }
+        .form-group select { cursor: pointer; }
+
+        .info-tag {
+            display: inline-block;
+            background: #e8f4fd;
+            color: #0a3d62;
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        /* ===== TRACK SELECTOR ===== */
+        .track-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .track-option {
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            background: #fafbfc;
+        }
+        .track-option:hover {
+            border-color: #74b9ff;
+            background: #f0f8ff;
+        }
+        .track-option.selected {
+            border-color: #0a3d62;
+            background: #e8f4fd;
+            box-shadow: 0 0 0 3px rgba(10,61,98,0.12);
+        }
+        .track-option .track-icon { font-size: 28px; margin-bottom: 6px; }
+        .track-option .track-name { font-size: 14px; font-weight: 700; }
+        .track-option .track-desc { font-size: 11px; color: #636e72; margin-top: 4px; }
+
+        /* ===== BUTTON ===== */
+        .calc-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #0a3d62, #1e5f8a);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Heebo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .calc-btn:hover { box-shadow: 0 8px 25px rgba(10,61,98,0.3); transform: translateY(-1px); }
+        .calc-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ===== RESULT SECTION ===== */
+        #result-section { display: none; }
+
+        .result-hero {
+            background: linear-gradient(135deg, #0a3d62, #1e5f8a);
+            color: #fff;
+            border-radius: 16px;
+            padding: 36px 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .result-hero .label { font-size: 16px; opacity: 0.8; margin-bottom: 8px; }
+        .result-hero .amount {
+            font-size: 52px;
+            font-weight: 900;
+            direction: ltr;
+            unicode-bidi: bidi-override;
+        }
+        .result-hero .amount-note { font-size: 13px; opacity: 0.6; margin-top: 6px; }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 12px 16px;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .breakdown-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #0a3d62;
+        }
+        .breakdown-table tr:last-child td { border-bottom: none; }
+        .breakdown-table .total-row td {
+            font-weight: 700;
+            font-size: 16px;
+            background: #e8f4fd;
+            color: #0a3d62;
+        }
+
+        /* ===== CHECKLIST ===== */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist li::before {
+            content: "☐";
+            font-size: 18px;
+            color: #0a3d62;
+            flex-shrink: 0;
+        }
+
+        /* ===== LINKS ===== */
+        .action-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 20px;
+        }
+        .action-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px;
+            background: #f8f9fa;
+            border: 1.5px solid #dfe6e9;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #2d3436;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .action-link:hover { border-color: #0a3d62; background: #e8f4fd; }
+        .action-link .link-icon { font-size: 24px; }
+
+        .reset-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 40px;
+            background: transparent;
+            border: 2px solid #0a3d62;
+            border-radius: 10px;
+            color: #0a3d62;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Heebo', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .reset-btn:hover { background: #0a3d62; color: #fff; }
+
+        /* ===== ELIGIBILITY BADGE ===== */
+        .elig-badge {
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .elig-badge.eligible { background: #d4edda; color: #155724; }
+        .elig-badge.partial { background: #fff3cd; color: #856404; }
+        .elig-badge.not-eligible { background: #f8d7da; color: #721c24; }
+
+        /* ===== PRINT ===== */
+        .print-btn {
+            padding: 10px 24px;
+            background: #6c757d;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Heebo', sans-serif;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        @media print {
+            .top-bar { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .calc-btn, .reset-btn, .print-btn, #form-section { display: none !important; }
+            #result-section { display: block !important; }
+            body { background: #fff; }
+        }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .action-links { grid-template-columns: 1fr; }
+            .result-hero .amount { font-size: 36px; }
+            .card { padding: 24px 18px; }
+            .track-selector { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h1>🏛️ מחשבון פיצויי מלחמה לעסקים</h1>
+    <p>חישוב לפי תקנות מס רכוש וקרן פיצויים — מסלול מחזורים / שכר / נזק ישיר</p>
+</div>
+
+<div class="container">
+
+    <div class="disclaimer-box">
+        <strong>⚠️ שימו לב:</strong>
+        החישוב מבוסס על תקנות מס רכוש וקרן פיצויים כפי שפורסמו.
+        הסכומים הם <strong>הערכה בלבד</strong> ואינם מהווים תחליף לבדיקה מקצועית.
+        הסכום הסופי ייקבע על ידי רשות המסים בלבד.
+        <br>עדכון אחרון של הנוסחאות: מרץ 2026.
+    </div>
+
+    <!-- ===== FORM SECTION ===== -->
+    <div id="form-section">
+
+        <!-- STEP 1: Track Selection -->
+        <div class="card">
+            <h2>📋 שלב 1 — בחירת מסלול פיצוי</h2>
+            <p class="card-desc">בחר את המסלול המתאים לסוג הנזק שנגרם לעסק שלך</p>
+
+            <div class="track-selector" id="track-selector">
+                <div class="track-option selected" data-track="revenue" onclick="selectTrack('revenue')">
+                    <div class="track-icon">📊</div>
+                    <div class="track-name">מסלול מחזורים</div>
+                    <div class="track-desc">ירידה בהכנסות העסק</div>
+                </div>
+                <div class="track-option" data-track="salary" onclick="selectTrack('salary')">
+                    <div class="track-icon">👥</div>
+                    <div class="track-name">מסלול שכר עבודה</div>
+                    <div class="track-desc">הוצאות שכר שהמשיכו</div>
+                </div>
+                <div class="track-option" data-track="direct" onclick="selectTrack('direct')">
+                    <div class="track-icon">🔨</div>
+                    <div class="track-name">נזק ישיר</div>
+                    <div class="track-desc">נזק פיזי לרכוש העסק</div>
+                </div>
+                <div class="track-option" data-track="agriculture" onclick="selectTrack('agriculture')">
+                    <div class="track-icon">🌾</div>
+                    <div class="track-name">מסלול חקלאות</div>
+                    <div class="track-desc">נזקים לגידולים / משקים</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Business Details -->
+        <div class="card">
+            <h2>🏢 שלב 2 — פרטי העסק</h2>
+            <p class="card-desc">פרטים בסיסיים על העסק שלך</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>שם העסק / בעל העסק</label>
+                    <input type="text" id="biz-name" placeholder="לדוגמה: מסעדת השף">
+                </div>
+                <div class="form-group">
+                    <label>מספר עוסק / ח.פ.</label>
+                    <input type="text" id="biz-id" placeholder="לדוגמה: 514123456">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>תחום העיסוק</label>
+                    <select id="biz-sector">
+                        <option value="" disabled selected>בחר תחום</option>
+                        <option value="food">מסעדנות / מזון</option>
+                        <option value="retail">קמעונאות</option>
+                        <option value="services">שירותים</option>
+                        <option value="tourism">תיירות ואירוח</option>
+                        <option value="construction">בנייה / תשתיות</option>
+                        <option value="agriculture">חקלאות</option>
+                        <option value="industry">תעשייה / ייצור</option>
+                        <option value="tech">הייטק / טכנולוגיה</option>
+                        <option value="transport">הובלה / תחבורה</option>
+                        <option value="education">חינוך / הדרכה</option>
+                        <option value="health">בריאות</option>
+                        <option value="other">אחר</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>אזור העסק</label>
+                    <select id="biz-area">
+                        <option value="" disabled selected>בחר אזור</option>
+                        <option value="frontline_south">עוטף עזה / קו עימות דרומי (0-7 ק"מ)</option>
+                        <option value="south_40">דרום — עד 40 ק"מ מהגדר</option>
+                        <option value="south_80">דרום — 40-80 ק"מ מהגדר</option>
+                        <option value="frontline_north">קו עימות צפוני (0-9 ק"מ)</option>
+                        <option value="north_40">צפון — עד 40 ק"מ מהגבול</option>
+                        <option value="center">מרכז הארץ</option>
+                        <option value="jerusalem">ירושלים והסביבה</option>
+                        <option value="judea_samaria">יהודה ושומרון</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>מספר עובדים</label>
+                    <input type="number" id="biz-employees" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>סוג עוסק</label>
+                    <select id="biz-type">
+                        <option value="exempt">עוסק פטור</option>
+                        <option value="licensed" selected>עוסק מורשה</option>
+                        <option value="company">חברה בע"מ</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Financial Data — REVENUE TRACK -->
+        <div class="card" id="track-revenue-fields">
+            <h2>💰 שלב 3 — נתונים כספיים (מסלול מחזורים)</h2>
+            <p class="card-desc">נתוני מחזור העסק בתקופת הנזק ובתקופת ההשוואה</p>
+
+            <span class="info-tag">📌 תקופת ההשוואה = אותם חודשים בשנה הקודמת</span>
+
+            <div class="form-row" style="margin-top: 16px;">
+                <div class="form-group">
+                    <label>חודש התחלת נזק</label>
+                    <input type="month" id="damage-start" value="2025-10">
+                </div>
+                <div class="form-group">
+                    <label>חודש סיום נזק</label>
+                    <input type="month" id="damage-end" value="2025-12">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>מחזור בתקופת הנזק (₪) <span class="hint">— סה"כ בכל החודשים</span></label>
+                    <input type="number" id="revenue-damage" placeholder="לדוגמה: 30000" min="0">
+                </div>
+                <div class="form-group">
+                    <label>מחזור בתקופת ההשוואה (₪) <span class="hint">— אותם חודשים שנה קודמת</span></label>
+                    <input type="number" id="revenue-compare" placeholder="לדוגמה: 120000" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>הוצאות נחסכות (%) <span class="hint">— ברירת מחדל 17.5%</span></label>
+                    <input type="number" id="saved-expenses" value="17.5" min="0" max="100" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>מחזור שנתי כולל (₪) <span class="hint">— 12 חודשים אחרונים</span></label>
+                    <input type="number" id="annual-revenue" placeholder="לדוגמה: 600000" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Financial Data — SALARY TRACK -->
+        <div class="card" id="track-salary-fields" style="display:none;">
+            <h2>💰 שלב 3 — נתוני שכר עבודה</h2>
+            <p class="card-desc">הוצאות שכר ששולמו בתקופת הנזק למרות הפסקת/צמצום פעילות</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>סה"כ שכר ברוטו ששולם בתקופת הנזק (₪)</label>
+                    <input type="number" id="salary-paid" placeholder="לדוגמה: 80000" min="0">
+                </div>
+                <div class="form-group">
+                    <label>מספר חודשי נזק</label>
+                    <input type="number" id="salary-months" placeholder="3" min="1" max="12">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>מספר עובדים ששהו בהוצאה כפויה</label>
+                    <input type="number" id="salary-forced-leave" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>שכר ממוצע חודשי לעובד (₪)</label>
+                    <input type="number" id="salary-avg" placeholder="לדוגמה: 10000" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Financial Data — DIRECT DAMAGE -->
+        <div class="card" id="track-direct-fields" style="display:none;">
+            <h2>💰 שלב 3 — נזק ישיר לרכוש</h2>
+            <p class="card-desc">פירוט הנזקים הפיזיים שנגרמו לעסק</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>שווי נזק למבנה (₪)</label>
+                    <input type="number" id="direct-building" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>שווי נזק לציוד / מלאי (₪)</label>
+                    <input type="number" id="direct-equipment" placeholder="0" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>שווי נזק לרכב (₪)</label>
+                    <input type="number" id="direct-vehicle" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>הוצאות שיקום / פינוי (₪)</label>
+                    <input type="number" id="direct-rehab" placeholder="0" min="0">
+                </div>
+            </div>
+            <div class="form-group full">
+                <label>תיאור הנזקים</label>
+                <textarea id="direct-desc" rows="3" placeholder="תאר את הנזקים שנגרמו..."></textarea>
+            </div>
+        </div>
+
+        <!-- STEP 3: Financial Data — AGRICULTURE -->
+        <div class="card" id="track-agriculture-fields" style="display:none;">
+            <h2>💰 שלב 3 — נזקי חקלאות</h2>
+            <p class="card-desc">פירוט נזקים לגידולים, בעלי חיים ותשתיות חקלאיות</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>שווי יבול שאבד (₪)</label>
+                    <input type="number" id="agri-crop" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>שווי נזק לבעלי חיים (₪)</label>
+                    <input type="number" id="agri-animals" placeholder="0" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>שווי נזק לתשתיות חקלאיות (₪)</label>
+                    <input type="number" id="agri-infra" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>הוצאות שיקום / שתילה מחדש (₪)</label>
+                    <input type="number" id="agri-rehab" placeholder="0" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- CALCULATE -->
+        <button class="calc-btn" onclick="calculate()">📊 חשב פיצויים</button>
+    </div>
+
+    <!-- ===== RESULT SECTION ===== -->
+    <div id="result-section">
+
+        <div class="result-hero">
+            <div class="label">סכום הפיצוי המשוער</div>
+            <div class="amount" id="result-amount">₪0</div>
+            <div class="amount-note" id="result-note">הערכה לפי תקנות מס רכוש וקרן פיצויים</div>
+            <div id="result-elig"></div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="card">
+            <h2>📑 פירוט החישוב</h2>
+            <table class="breakdown-table" id="breakdown-table">
+                <thead><tr><th>פרמטר</th><th>ערך</th></tr></thead>
+                <tbody id="breakdown-body"></tbody>
+            </table>
+        </div>
+
+        <!-- Notes -->
+        <div class="card" id="calc-notes-card">
+            <h2>📝 הערות לחישוב</h2>
+            <ul id="calc-notes" style="padding-right: 20px; font-size: 14px; line-height: 2; color: #636e72;"></ul>
+        </div>
+
+        <!-- Required Documents -->
+        <div class="card">
+            <h2>📎 מסמכים נדרשים להגשה</h2>
+            <p class="card-desc">רשימת המסמכים שיש להכין לפני הגשת התביעה</p>
+            <ul class="checklist" id="checklist"></ul>
+        </div>
+
+        <!-- Action Links -->
+        <div class="card">
+            <h2>🔗 הגשת התביעה</h2>
+            <p class="card-desc">קישורים ישירים למערכות ההגשה הרלוונטיות</p>
+            <div class="action-links">
+                <a class="action-link" href="https://www.gov.il/he/service/war-damage-compensation-claim" target="_blank" rel="noopener">
+                    <span class="link-icon">🏛️</span>
+                    <span>הגשת תביעה באתר רשות המסים</span>
+                </a>
+                <a class="action-link" href="https://www.misim.gov.il/shmrhsvt/frmMain.aspx" target="_blank" rel="noopener">
+                    <span class="link-icon">📝</span>
+                    <span>מערכת תביעות מס רכוש</span>
+                </a>
+                <a class="action-link" href="https://www.gov.il/he/departments/topics/iron-swords-war-compensation" target="_blank" rel="noopener">
+                    <span class="link-icon">📋</span>
+                    <span>כל מסלולי הפיצוי — gov.il</span>
+                </a>
+                <a class="action-link" href="tel:*4954" target="_blank" rel="noopener">
+                    <span class="link-icon">📞</span>
+                    <span>מוקד מס רכוש — *4954</span>
+                </a>
+            </div>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">🖨️ הדפס / שמור PDF</button>
+        <button class="reset-btn" onclick="resetForm()">↩️ חישוב חדש</button>
+    </div>
+
+</div>
+
+<script>
+// ===== STATE =====
+let selectedTrack = 'revenue';
+
+// ===== CONSTANTS (based on published regulations) =====
+const AREA_CONFIG = {
+    frontline_south: { name: 'עוטף עזה / קו עימות דרומי', minDecline: 12.5, compRate: 1.0, priority: 'גבוהה' },
+    south_40:        { name: 'דרום — עד 40 ק"מ',          minDecline: 12.5, compRate: 1.0, priority: 'גבוהה' },
+    south_80:        { name: 'דרום — 40-80 ק"מ',           minDecline: 25,   compRate: 0.85, priority: 'בינונית' },
+    frontline_north: { name: 'קו עימות צפוני',             minDecline: 12.5, compRate: 1.0, priority: 'גבוהה' },
+    north_40:        { name: 'צפון — עד 40 ק"מ',           minDecline: 12.5, compRate: 1.0, priority: 'גבוהה' },
+    center:          { name: 'מרכז הארץ',                  minDecline: 25,   compRate: 0.70, priority: 'נמוכה' },
+    jerusalem:       { name: 'ירושלים והסביבה',             minDecline: 25,   compRate: 0.80, priority: 'בינונית' },
+    judea_samaria:   { name: 'יהודה ושומרון',              minDecline: 25,   compRate: 0.85, priority: 'בינונית' }
+};
+
+// Monthly cap tiers based on annual revenue
+function getMonthlyCap(annualRevenue) {
+    if (annualRevenue <= 300000)    return 22500;    // עד 300K
+    if (annualRevenue <= 1500000)   return 45000;    // עד 1.5M
+    if (annualRevenue <= 6000000)   return 112500;   // עד 6M
+    if (annualRevenue <= 20000000)  return 200000;   // עד 20M
+    if (annualRevenue <= 100000000) return 375000;   // עד 100M
+    return 625000;                                    // מעל 100M
+}
+
+// Salary track — cap per employee per month
+const SALARY_CAP_PER_EMPLOYEE = 17500; // approximately
+
+// ===== TRACK SELECTION =====
+function selectTrack(track) {
+    selectedTrack = track;
+    document.querySelectorAll('.track-option').forEach(el => el.classList.remove('selected'));
+    document.querySelector(`[data-track="${track}"]`).classList.add('selected');
+
+    // Show/hide relevant fields
+    ['revenue', 'salary', 'direct', 'agriculture'].forEach(t => {
+        const el = document.getElementById(`track-${t}-fields`);
+        if (el) el.style.display = (t === track) ? 'block' : 'none';
+    });
+}
+
+// ===== NUMBER FORMATTING =====
+function fmt(n) {
+    return '₪' + Math.round(n).toLocaleString('he-IL');
+}
+function pct(n) {
+    return n.toFixed(1) + '%';
+}
+
+// ===== MAIN CALCULATION =====
+function calculate() {
+    const area = document.getElementById('biz-area').value;
+    if (!area) { alert('יש לבחור אזור עסק'); return; }
+
+    const areaConf = AREA_CONFIG[area];
+    let result = {};
+
+    switch (selectedTrack) {
+        case 'revenue':  result = calcRevenue(areaConf); break;
+        case 'salary':   result = calcSalary(areaConf); break;
+        case 'direct':   result = calcDirect(areaConf); break;
+        case 'agriculture': result = calcAgriculture(areaConf); break;
+    }
+
+    if (result.error) { alert(result.error); return; }
+
+    // Send data to Google Sheets (separate endpoint)
+    sendToSheet(result);
+
+    // Display results
+    displayResult(result, areaConf);
+}
+
+// ===== REVENUE TRACK CALCULATION =====
+function calcRevenue(areaConf) {
+    const revDamage  = parseFloat(document.getElementById('revenue-damage').value)  || 0;
+    const revCompare = parseFloat(document.getElementById('revenue-compare').value) || 0;
+    const savedExp   = parseFloat(document.getElementById('saved-expenses').value)  || 17.5;
+    const annualRev  = parseFloat(document.getElementById('annual-revenue').value)  || 0;
+
+    if (revCompare === 0) return { error: 'יש להזין מחזור תקופת השוואה' };
+
+    const decline = revCompare - revDamage;
+    const declinePct = (decline / revCompare) * 100;
+
+    // Check minimum decline threshold
+    if (declinePct < areaConf.minDecline) {
+        return {
+            error: `אחוז הירידה (${pct(declinePct)}) נמוך מסף הזכאות באזור שלך (${pct(areaConf.minDecline)}). לא נמצאה זכאות במסלול מחזורים.`
+        };
+    }
+
+    const damageStart = document.getElementById('damage-start').value;
+    const damageEnd = document.getElementById('damage-end').value;
+    const numMonths = monthDiff(damageStart, damageEnd);
+
+    const netDecline = decline * (1 - savedExp / 100);
+    const monthlyCap = getMonthlyCap(annualRev);
+    const totalCap = monthlyCap * numMonths;
+    const beforeCap = netDecline * areaConf.compRate;
+    const compensation = Math.min(beforeCap, totalCap);
+
+    const breakdown = [
+        ['מסלול', 'מחזורים'],
+        ['תקופת נזק', `${numMonths} חודשים`],
+        ['מחזור תקופת השוואה', fmt(revCompare)],
+        ['מחזור תקופת נזק', fmt(revDamage)],
+        ['ירידה במחזור', fmt(decline)],
+        ['אחוז ירידה', pct(declinePct)],
+        ['סף זכאות באזור', pct(areaConf.minDecline)],
+        ['הוצאות נחסכות', pct(savedExp)],
+        ['ירידה נטו (אחרי ניכוי הוצאות נחסכות)', fmt(netDecline)],
+        ['שיעור פיצוי לפי אזור', pct(areaConf.compRate * 100)],
+        ['סכום לפני תקרה', fmt(beforeCap)],
+        ['תקרה חודשית', fmt(monthlyCap)],
+        ['תקרה לתקופה', fmt(totalCap)],
+    ];
+
+    const notes = [
+        'אחוז ההוצאות הנחסכות (ברירת מחדל 17.5%) ניתן לשינוי — ניתן להגיש חוות דעת רו"ח לשיעור שונה.',
+        `הסף המינימלי לזכאות באזור "${areaConf.name}" הוא ירידה של ${pct(areaConf.minDecline)} לפחות.`,
+        'התקרה החודשית נקבעת לפי גובה המחזור השנתי של העסק.',
+        compensation < beforeCap ? '⚠️ הפיצוי הוגבל בגלל תקרה — ייתכן שכדאי לבדוק מסלולים נוספים.' : '',
+    ].filter(Boolean);
+
+    return {
+        track: 'revenue',
+        amount: compensation,
+        eligible: true,
+        declinePct,
+        breakdown,
+        notes,
+        checklist: getRevenueChecklist()
+    };
+}
+
+// ===== SALARY TRACK CALCULATION =====
+function calcSalary(areaConf) {
+    const salaryPaid    = parseFloat(document.getElementById('salary-paid').value)    || 0;
+    const months        = parseInt(document.getElementById('salary-months').value)     || 1;
+    const forcedLeave   = parseInt(document.getElementById('salary-forced-leave').value) || 0;
+    const avgSalary     = parseFloat(document.getElementById('salary-avg').value)     || 0;
+
+    if (salaryPaid === 0) return { error: 'יש להזין סה"כ שכר ברוטו ששולם' };
+
+    const capTotal = forcedLeave * SALARY_CAP_PER_EMPLOYEE * months;
+    const compensation = Math.min(salaryPaid * areaConf.compRate, capTotal > 0 ? capTotal : salaryPaid);
+
+    const breakdown = [
+        ['מסלול', 'שכר עבודה'],
+        ['חודשי נזק', months],
+        ['שכר ברוטו ששולם', fmt(salaryPaid)],
+        ['עובדים בהוצאה כפויה', forcedLeave],
+        ['שכר ממוצע לעובד', fmt(avgSalary)],
+        ['תקרה לעובד/חודש', fmt(SALARY_CAP_PER_EMPLOYEE)],
+        ['שיעור פיצוי לפי אזור', pct(areaConf.compRate * 100)],
+    ];
+
+    const notes = [
+        'הפיצוי במסלול שכר מכסה את הוצאות השכר ששולמו לעובדים בתקופה שבה העסק לא פעל או צמצם פעילות.',
+        'ניתן להגיש גם במסלול מחזורים וגם במסלול שכר — אבל לא על אותה תקופה.',
+        `תקרת פיצוי לעובד: ${fmt(SALARY_CAP_PER_EMPLOYEE)} לחודש.`,
+    ];
+
+    return {
+        track: 'salary',
+        amount: compensation,
+        eligible: true,
+        breakdown,
+        notes,
+        checklist: getSalaryChecklist()
+    };
+}
+
+// ===== DIRECT DAMAGE CALCULATION =====
+function calcDirect(areaConf) {
+    const building  = parseFloat(document.getElementById('direct-building').value)  || 0;
+    const equipment = parseFloat(document.getElementById('direct-equipment').value) || 0;
+    const vehicle   = parseFloat(document.getElementById('direct-vehicle').value)   || 0;
+    const rehab     = parseFloat(document.getElementById('direct-rehab').value)     || 0;
+
+    const total = building + equipment + vehicle + rehab;
+    if (total === 0) return { error: 'יש להזין לפחות סוג נזק אחד' };
+
+    // Direct damage — usually 100% compensation
+    const compensation = total;
+
+    const breakdown = [
+        ['מסלול', 'נזק ישיר'],
+        ['נזק למבנה', fmt(building)],
+        ['נזק לציוד / מלאי', fmt(equipment)],
+        ['נזק לרכב', fmt(vehicle)],
+        ['הוצאות שיקום / פינוי', fmt(rehab)],
+        ['סה"כ נזק', fmt(total)],
+    ];
+
+    const notes = [
+        'נזק ישיר מפוצה בדרך כלל במלואו — בכפוף לאימות שמאי מטעם רשות המסים.',
+        'יש לצרף תמונות, קבלות, חוות דעת שמאי, ואישור משטרה/פיקוד העורף.',
+        'ניתן להגיש תביעת נזק ישיר בנוסף לתביעה על מסלול מחזורים.',
+    ];
+
+    return {
+        track: 'direct',
+        amount: compensation,
+        eligible: true,
+        breakdown,
+        notes,
+        checklist: getDirectChecklist()
+    };
+}
+
+// ===== AGRICULTURE CALCULATION =====
+function calcAgriculture(areaConf) {
+    const crop    = parseFloat(document.getElementById('agri-crop').value)    || 0;
+    const animals = parseFloat(document.getElementById('agri-animals').value) || 0;
+    const infra   = parseFloat(document.getElementById('agri-infra').value)   || 0;
+    const rehab   = parseFloat(document.getElementById('agri-rehab').value)   || 0;
+
+    const total = crop + animals + infra + rehab;
+    if (total === 0) return { error: 'יש להזין לפחות סוג נזק חקלאי אחד' };
+
+    const compensation = total * areaConf.compRate;
+
+    const breakdown = [
+        ['מסלול', 'חקלאות'],
+        ['יבול שאבד', fmt(crop)],
+        ['נזק לבעלי חיים', fmt(animals)],
+        ['נזק לתשתיות', fmt(infra)],
+        ['שיקום / שתילה מחדש', fmt(rehab)],
+        ['סה"כ נזק', fmt(total)],
+        ['שיעור פיצוי לפי אזור', pct(areaConf.compRate * 100)],
+    ];
+
+    const notes = [
+        'נזקי חקלאות מחושבים לפי שווי השוק של הגידולים / בעלי החיים.',
+        'יש לצרף אישור מהמשרד לחקלאות או ממנהל ההתיישבות.',
+    ];
+
+    return {
+        track: 'agriculture',
+        amount: compensation,
+        eligible: true,
+        breakdown,
+        notes,
+        checklist: getAgricultureChecklist()
+    };
+}
+
+// ===== DISPLAY =====
+function displayResult(result, areaConf) {
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('result-section').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Amount
+    document.getElementById('result-amount').textContent = fmt(result.amount);
+
+    // Eligibility badge
+    const eligEl = document.getElementById('result-elig');
+    if (result.eligible) {
+        eligEl.innerHTML = `<span class="elig-badge eligible">✅ נמצאה זכאות — אזור: ${areaConf.name} | עדיפות: ${areaConf.priority}</span>`;
+    }
+
+    // Breakdown table
+    const tbody = document.getElementById('breakdown-body');
+    tbody.innerHTML = '';
+    result.breakdown.forEach((row, i) => {
+        const tr = document.createElement('tr');
+        if (i === result.breakdown.length - 1 && result.track === 'revenue') tr.classList.add('total-row');
+        tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td>`;
+        tbody.appendChild(tr);
+    });
+
+    // Add total row
+    const totalTr = document.createElement('tr');
+    totalTr.classList.add('total-row');
+    totalTr.innerHTML = `<td>סה"כ פיצוי משוער</td><td>${fmt(result.amount)}</td>`;
+    tbody.appendChild(totalTr);
+
+    // Notes
+    const notesList = document.getElementById('calc-notes');
+    notesList.innerHTML = '';
+    result.notes.forEach(note => {
+        const li = document.createElement('li');
+        li.textContent = note;
+        notesList.appendChild(li);
+    });
+
+    // Checklist
+    const checklistEl = document.getElementById('checklist');
+    checklistEl.innerHTML = '';
+    result.checklist.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        checklistEl.appendChild(li);
+    });
+}
+
+// ===== CHECKLISTS =====
+function getRevenueChecklist() {
+    return [
+        'דו"חות מע"מ (דו-חודשיים) לתקופת הנזק ולתקופת ההשוואה',
+        'דו"ח רווח והפסד / מאזן בוחן לתקופות הרלוונטיות',
+        'אישור רו"ח / יועץ מס על הנתונים',
+        'צילום תעודת זהות + ספח של בעל העסק',
+        'אישור ניהול חשבון בנק עסקי',
+        'אישור עוסק מורשה / פטור',
+        'ייפוי כוח (אם מוגש ע"י מייצג)',
+        'תצהיר חתום על ירידה בפעילות',
+    ];
+}
+function getSalaryChecklist() {
+    return [
+        'תלושי שכר לתקופת הנזק',
+        'טופס 102 — דיווח מס הכנסה על שכר',
+        'רשימת עובדים ששהו בהוצאה כפויה / חל"ת',
+        'אישור רו"ח על הוצאות השכר',
+        'אישור ניהול חשבון בנק עסקי',
+        'צילום תעודת זהות + ספח',
+    ];
+}
+function getDirectChecklist() {
+    return [
+        'תמונות הנזק (לפני ואחרי אם אפשר)',
+        'חוות דעת שמאי',
+        'אישור משטרה / פיקוד העורף על האירוע',
+        'קבלות רכישה מקוריות של הרכוש שניזוק',
+        'הצעות מחיר לתיקון / החלפה',
+        'אישור חברת ביטוח (אם יש) על חלק שלא כוסה',
+        'צילום תעודת זהות + ספח',
+    ];
+}
+function getAgricultureChecklist() {
+    return [
+        'אישור ממשרד החקלאות / מנהל ההתיישבות',
+        'דו"ח שמאי חקלאי',
+        'מסמכי בעלות / חכירה על הקרקע',
+        'קבלות על הוצאות שתילה / גידול',
+        'תמונות הנזק',
+        'אישור ועד מקומי / מזכירות היישוב',
+        'צילום תעודת זהות + ספח',
+    ];
+}
+
+// ===== HELPERS =====
+function monthDiff(start, end) {
+    if (!start || !end) return 3;
+    const [sy, sm] = start.split('-').map(Number);
+    const [ey, em] = end.split('-').map(Number);
+    return Math.max(1, (ey - sy) * 12 + (em - sm) + 1);
+}
+
+function resetForm() {
+    document.getElementById('result-section').style.display = 'none';
+    document.getElementById('form-section').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== GOOGLE SHEETS (SEPARATE ENDPOINT) =====
+const REAL_CALC_SCRIPT_URL = "YOUR_REAL_CALC_GOOGLE_SCRIPT_URL";
+
+function sendToSheet(result) {
+    if (REAL_CALC_SCRIPT_URL === "YOUR_REAL_CALC_GOOGLE_SCRIPT_URL") return;
+
+    const payload = {
+        timestamp: new Date().toISOString(),
+        track: result.track,
+        bizName: document.getElementById('biz-name').value,
+        bizId: document.getElementById('biz-id').value,
+        area: document.getElementById('biz-area').value,
+        sector: document.getElementById('biz-sector').value,
+        employees: document.getElementById('biz-employees').value,
+        estimatedCompensation: Math.round(result.amount),
+        eligible: result.eligible,
+        source: 'real_calculator'
+    };
+
+    fetch(REAL_CALC_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    }).catch(() => {});
+}
+</script>
+</body>
+</html>
